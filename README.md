@@ -1,54 +1,273 @@
-# Welcome to your Lovable project
+# Achut's Legal Notebook - Admin Dashboard
 
-## Project info
+A comprehensive legal blog platform with a secure, owner-only admin dashboard for content management and analytics.
 
-**URL**: https://lovable.dev/projects/6bb42ea6-ab66-45f0-b77b-6f8bf351f0e1
+## 🔐 Admin Dashboard Features
 
-## How can I edit this code?
+### Authentication & Security
+- **Secure Login**: Owner-only access with strong password hashing
+- **Session Management**: Configurable session duration with "Remember Me" option
+- **Rate Limiting**: Brute force protection (5 attempts per 15 minutes)
+- **CSRF Protection**: Built-in CSRF token validation
+- **Route Guards**: All admin routes protected by authentication
 
-There are several ways of editing your application.
+### Dashboard Overview
+- **Website Statistics**: Total articles, page views, and engagement metrics
+- **Quick Actions**: Direct access to create articles, manage drafts
+- **Recent Activity**: Timeline of system events and content updates
+- **Performance Metrics**: Real-time analytics and trending content
 
-**Use Lovable**
+### Content Management
+- **Articles Management**: Full CRUD operations with advanced filtering
+- **Rich Text Editor**: Markdown-based editor with live preview
+- **Draft System**: Save, edit, and publish workflow
+- **Category & Tag Management**: Organize content with metadata
+- **SEO Optimization**: Slug management and content validation
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/6bb42ea6-ab66-45f0-b77b-6f8bf351f0e1) and start prompting.
+### Analytics Dashboard
+- **Page View Tracking**: Daily and weekly traffic analysis
+- **Interactive Charts**: Responsive charts using Recharts
+- **Content Performance**: Top articles and engagement metrics
+- **Category Distribution**: Visual breakdown of content organization
 
-Changes made via Lovable will be committed automatically to this repo.
+### Notifications System
+- **System Alerts**: INFO, WARN, and ERROR notifications
+- **Read/Unread Management**: Mark notifications and track status
+- **Search & Filter**: Find notifications by type and content
+- **Real-time Updates**: Dashboard badge showing unread count
 
-**Use your preferred IDE**
+### Settings & Administration
+- **Profile Management**: Update email and username
+- **Password Security**: Change passwords with validation
+- **Storage Analytics**: View data usage and system statistics
+- **System Reset**: Complete data reset functionality (danger zone)
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+## 🚀 Quick Start
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Prerequisites
+- Node.js & npm installed ([install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating))
 
-Follow these steps:
+### Installation & Setup
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
+# Clone the repository
 git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
 cd <YOUR_PROJECT_NAME>
 
-# Step 3: Install the necessary dependencies.
-npm i
+# Install dependencies
+npm install
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Default Admin Credentials
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+**⚠️ IMPORTANT: Change these credentials after first login**
 
-**Use GitHub Codespaces**
+```
+Username: admin
+Password: admin123!
+Email: admin@achutslegal.com
+```
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+### Admin Access
+- Navigate to `/admin/login` to access the admin dashboard
+- Use default credentials for first login
+- Change credentials in Settings > Security tab
+
+## 🎨 Environment Configuration
+
+### Environment Variables (Optional)
+```env
+ADMIN_EMAIL=your-admin@email.com
+ADMIN_USERNAME=your-username
+ADMIN_PASSWORD=your-secure-password
+```
+
+### Data Storage
+- **Development**: Uses localStorage for data persistence
+- **Production Ready**: Easy migration to backend databases
+- **Backup**: Export/import functionality for data management
+
+## 📁 Project Structure
+
+```
+src/
+├── components/
+│   ├── admin/
+│   │   ├── AdminLayout.tsx      # Main admin shell with navigation
+│   │   └── RichTextEditor.tsx   # Markdown editor component
+│   └── ui/                      # Shadcn UI components
+├── contexts/
+│   └── AuthContext.tsx          # Authentication state management
+├── hooks/
+├── lib/
+│   ├── auth.ts                  # Authentication service
+│   ├── storage.ts               # Data layer abstraction
+│   ├── seed.ts                  # Data migration and seeding
+│   └── types.ts                 # TypeScript definitions
+├── pages/
+│   ├── AdminLogin.tsx           # Login page
+│   ├── AdminOverview.tsx        # Dashboard home
+│   ├── AdminArticles.tsx        # Articles management
+│   ├── AdminDrafts.tsx          # Drafts management
+│   ├── AdminNotifications.tsx   # Notifications system
+│   ├── AdminAnalytics.tsx       # Analytics dashboard
+│   └── AdminSettings.tsx        # Settings and profile
+└── __tests__/                   # Test suites
+```
+
+## 🧪 Testing
+
+### Run Tests
+```sh
+# Run unit tests
+npm run test
+
+# Run e2e tests
+npm run test:e2e
+
+# Run with coverage
+npm run test:coverage
+```
+
+### Test Coverage
+- **Authentication**: Login, logout, session management
+- **Storage Layer**: CRUD operations, data persistence
+- **Admin Workflow**: Complete e2e admin functionality
+- **Security**: Rate limiting, CSRF protection, validation
+
+## 🔧 Available Scripts
+
+```sh
+npm run dev          # Start development server
+npm run build        # Build for production
+npm run build:dev    # Build for development
+npm run preview      # Preview production build
+npm run test         # Run unit tests
+npm run test:e2e     # Run e2e tests
+npm run lint         # Run ESLint
+```
+
+## 🗺️ Admin Routes
+
+| Route | Description | Access |
+|-------|-------------|--------|
+| `/admin/login` | Admin login page | Public |
+| `/admin` | Dashboard overview | Protected |
+| `/admin/notifications` | Notifications management | Protected |
+| `/admin/articles` | Articles management | Protected |
+| `/admin/drafts` | Drafts management | Protected |
+| `/admin/analytics` | Analytics dashboard | Protected |
+| `/admin/settings` | Settings and profile | Protected |
+
+## 🛡️ Security Features
+
+- **Password Hashing**: SHA-256 with salt (ready for bcrypt/Argon2)
+- **Session Security**: Secure token generation and validation
+- **Rate Limiting**: Login attempt throttling
+- **CSRF Protection**: Token-based request validation
+- **Input Validation**: Zod schema validation throughout
+- **XSS Protection**: Sanitized output rendering
+- **Route Protection**: Authentication required for admin access
+
+## 📊 Data Management
+
+### Migration from Static Data
+The system automatically migrates existing static articles to the admin system on first run.
+
+### Backup and Restore
+- **Export**: Download all data as JSON
+- **Import**: Upload and restore from backup
+- **Reset**: Complete system reset option
+
+### Data Validation
+- **Slug Uniqueness**: Prevents duplicate article URLs
+- **Content Validation**: Required fields and format checking
+- **Image Handling**: Support for cover images and media
+
+## 🎯 Deployment
+
+### Build for Production
+```sh
+npm run build
+```
+
+### Environment Setup
+1. Set up environment variables for production
+2. Configure database connections (when migrating from localStorage)
+3. Set up SSL certificates
+4. Configure domain and hosting
+
+### Migration to Backend
+The current localStorage implementation provides a foundation for easy migration to:
+- **Databases**: PostgreSQL, MySQL, MongoDB
+- **Authentication**: JWT, OAuth, Auth0
+- **File Storage**: AWS S3, Cloudinary
+- **Analytics**: Google Analytics, custom tracking
+
+## 🔄 Rollback Plan
+
+### Feature Rollback
+```sh
+# Return to main branch
+git checkout main
+
+# Or rollback specific commits
+git revert <commit-hash>
+```
+
+### Data Rollback
+1. **Backup Current Data**: Use Settings > System > Export
+2. **Disable Admin Features**: Update routing in App.tsx
+3. **Restore Previous State**: Import previous backup
+4. **Verify Functionality**: Run full test suite
+
+### Emergency Procedures
+1. **Complete Reset**: Settings > System > Reset All Data
+2. **Credential Recovery**: Use default credentials
+3. **Data Recovery**: Restore from latest backup
+
+## 🏗️ Technology Stack
+
+- **Frontend**: React 18 + TypeScript + Vite
+- **UI Components**: Shadcn/ui + Radix UI
+- **Styling**: Tailwind CSS
+- **Charts**: Recharts
+- **Forms**: React Hook Form + Zod validation
+- **Routing**: React Router DOM v6
+- **State Management**: React Query + Context API
+- **Testing**: Vitest + Playwright
+- **Build**: Vite with TypeScript
+
+## 📚 Additional Resources
+
+- [Shadcn/ui Documentation](https://ui.shadcn.com/)
+- [React Router Documentation](https://reactrouter.com/)
+- [Recharts Documentation](https://recharts.org/)
+- [Tailwind CSS Documentation](https://tailwindcss.com/)
+
+## 🤝 Contributing
+
+1. Create feature branch from `main`
+2. Make changes following existing patterns
+3. Add tests for new functionality
+4. Ensure all tests pass
+5. Update documentation
+6. Submit pull request
+
+## 📞 Support
+
+For technical support or questions about the admin dashboard:
+1. Check existing documentation
+2. Review test cases for examples
+3. Examine component implementations
+4. Test locally before deployment
+
+---
+
+**Made with ❤️ for efficient legal content management**
 
 ## What technologies are used for this project?
 
