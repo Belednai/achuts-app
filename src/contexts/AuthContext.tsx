@@ -34,17 +34,25 @@ export function AuthProvider({ children }: AuthProviderProps) {
     try {
       setIsLoading(true);
       
+      console.log('Starting admin system initialization...');
+      
       // Initialize admin system if needed
       await initializeAdminSystem();
+      
+      console.log('Admin system initialization completed');
       
       // Check for existing session
       const currentSession = authService.getValidSession();
       const currentUser = authService.getCurrentUser();
       
+      console.log('Current session:', currentSession ? 'Found' : 'None');
+      console.log('Current user:', currentUser ? currentUser.username : 'None');
+      
       setSession(currentSession);
       setUser(currentUser);
     } catch (error) {
       console.error('Error initializing auth:', error);
+      // Even if initialization fails, we should still allow login attempts
     } finally {
       setIsLoading(false);
     }

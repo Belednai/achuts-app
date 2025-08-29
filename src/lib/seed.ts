@@ -253,15 +253,19 @@ export async function initializeAdminSystem(): Promise<void> {
   
   try {
     // Initialize owner account
+    console.log('Creating owner account...');
     await authService.initializeOwnerAccount();
     
     // Migrate existing articles
+    console.log('Migrating articles...');
     await migrateExistingArticles();
     
     // Seed initial notifications
+    console.log('Seeding notifications...');
     seedNotifications();
     
     // Seed sample page views for analytics
+    console.log('Seeding page views...');
     seedPageViews();
     
     console.log('Admin system initialization complete!');
@@ -283,6 +287,17 @@ export async function initializeAdminSystem(): Promise<void> {
     console.error('Error initializing admin system:', error);
     throw error;
   }
+}
+
+// Force initialization (for debugging)
+export async function forceInitializeAdminSystem(): Promise<void> {
+  console.log('Force initializing admin system...');
+  
+  // Clear all data first
+  storage.clearAllData();
+  
+  // Then reinitialize
+  await initializeAdminSystem();
 }
 
 // Reset admin system (for development/testing)

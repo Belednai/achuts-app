@@ -13,6 +13,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import type { LoginRequest } from "@/lib/types";
+import { forceInitializeAdminSystem } from "@/lib/seed";
 
 const loginSchema = z.object({
   usernameOrEmail: z.string().min(1, "Username or email is required").max(100),
@@ -132,6 +133,29 @@ const AdminLogin = () => {
             Username: <code className="bg-muted px-1 rounded">admin</code><br />
             Password: <code className="bg-muted px-1 rounded">admin123!</code><br />
             <em>Please change these after first login.</em>
+            <div className="mt-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={async () => {
+                  try {
+                    await forceInitializeAdminSystem();
+                    toast({
+                      title: "System reinitialized",
+                      description: "Admin system has been reset and reinitialized. Try logging in again.",
+                    });
+                  } catch (error) {
+                    toast({
+                      title: "Initialization failed", 
+                      description: "Check console for details.",
+                      variant: "destructive"
+                    });
+                  }
+                }}
+              >
+                Reset & Reinitialize System
+              </Button>
+            </div>
           </AlertDescription>
         </Alert>
 

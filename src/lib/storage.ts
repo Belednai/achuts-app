@@ -51,10 +51,21 @@ class StorageManager {
   }
 
   getUserByEmailOrUsername(emailOrUsername: string): User | null {
-    const users = this.getUsers();
-    return users.find(u => 
-      u.email === emailOrUsername || u.username === emailOrUsername
-    ) || null;
+    try {
+      const users = this.getUsers();
+      const user = users.find(u => 
+        u.email === emailOrUsername || u.username === emailOrUsername
+      ) || null;
+      
+      console.log(`Looking for user: ${emailOrUsername}`);
+      console.log(`Found ${users.length} total users`);
+      console.log(`Found user:`, user ? `${user.username} (${user.email})` : 'None');
+      
+      return user;
+    } catch (error) {
+      console.error('Error finding user:', error);
+      return null;
+    }
   }
 
   // Article management

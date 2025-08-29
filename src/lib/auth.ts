@@ -102,11 +102,14 @@ export class AuthService {
 
   async login(request: LoginRequest): Promise<{ success: boolean; error?: string; session?: AuthSession }> {
     const identifier = request.usernameOrEmail.toLowerCase();
+    
+    console.log('Login attempt for:', identifier);
 
     // Check rate limiting
     if (rateLimiter.isRateLimited(identifier)) {
       const remainingTime = rateLimiter.getRemainingTime(identifier);
       const minutes = Math.ceil(remainingTime / (60 * 1000));
+      console.log('Rate limited:', identifier);
       return {
         success: false,
         error: `Too many login attempts. Please try again in ${minutes} minutes.`
@@ -119,17 +122,25 @@ export class AuthService {
     // Find user
     const user = storage.getUserByEmailOrUsername(identifier);
     if (!user) {
+      console.log('User not found:', identifier);
       return { success: false, error: 'Invalid credentials' };
     }
 
+    console.log('User found:', user.username);
+
     // Verify password
+    console.log('Verifying password...');
     const isValidPassword = await verifyPassword(request.password, user.passwordHash);
+    console.log('Password valid:', isValidPassword);
+    
     if (!isValidPassword) {
+      console.log('Invalid password for user:', user.username);
       return { success: false, error: 'Invalid credentials' };
     }
 
     // Check role
     if (user.role !== 'OWNER') {
+      console.log('Access denied - not owner:', user.role);
       return { success: false, error: 'Access denied' };
     }
 
@@ -233,30 +244,35 @@ export class AuthService {
   async initializeOwnerAccount(): Promise<void> {
     const users = storage.getUsers();
     if (users.length === 0) {
-      // Create default owner from environment or use defaults
-      const email = process.env.ADMIN_EMAIL || 'admin@achutslegal.com';
-      const username = process.env.ADMIN_USERNAME || 'admin';
-      const password = process.env.ADMIN_PASSWORD || 'admin123!';
+      // Use hard-coded defaults (environment variables not available in browser)
+      const email = 'admin@achutslegal.com';
+      const username = 'admin';
+      const password = 'admin123!';
 
-      const hashedPassword = await hashPassword(password);
-      
-      const defaultOwner: User = {
-        id: generateToken(),
-        email,
-        username,
-        passwordHash: hashedPassword,
-        role: 'OWNER',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString()
-      };
+      try {
+        const hashedPassword = await hashPassword(password);
+        
+        const defaultOwner: User = {
+          id: generateToken(),
+          email,
+          username,
+          passwordHash: hashedPassword,
+          role: 'OWNER',
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString()
+        };
 
-      storage.setUsers([defaultOwner]);
+        storage.setUsers([defaultOwner]);
 
-      console.log('Default owner account created:');
-      console.log(`Email: ${email}`);
-      console.log(`Username: ${username}`);
-      console.log(`Password: ${password}`);
-      console.log('Please change these credentials after first login.');
+        console.log('Default owner account created:');
+        console.log(`Email: ${email}`);
+        console.log(`Username: ${username}`);
+        console.log(`Password: ${password}`);
+        console.log('Please change these credentials after first login.');
+      } catch (error) {
+        console.error('Error creating default owner account:', error);
+        throw error;
+      }
     }
   }
 
