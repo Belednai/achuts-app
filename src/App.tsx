@@ -18,6 +18,9 @@ import AdminLogin from "./pages/AdminLogin";
 import AdminOverview from "./pages/AdminOverview";
 import AdminNotifications from "./pages/AdminNotifications";
 import AdminArticles from "./pages/AdminArticles";
+import AdminDrafts from "./pages/AdminDrafts";
+import AdminAnalytics from "./pages/AdminAnalytics";
+import AdminSettings from "./pages/AdminSettings";
 import NotFound from "./pages/NotFound";
 import { AuthProvider, RequireAuth } from "./contexts/AuthContext";
 
@@ -66,6 +69,30 @@ const App = () => (
               element={
                 <RequireAuth fallback={<Navigate to="/admin/login" replace />}>
                   <AdminArticles />
+                </RequireAuth>
+              } 
+            />
+            <Route 
+              path="/admin/drafts" 
+              element={
+                <RequireAuth fallback={<Navigate to="/admin/login" replace />}>
+                  <AdminDrafts />
+                </RequireAuth>
+              } 
+            />
+            <Route 
+              path="/admin/analytics" 
+              element={
+                <RequireAuth fallback={<Navigate to="/admin/login" replace />}>
+                  <AdminAnalytics />
+                </RequireAuth>
+              } 
+            />
+            <Route 
+              path="/admin/settings" 
+              element={
+                <RequireAuth fallback={<Navigate to="/admin/login" replace />}>
+                  <AdminSettings />
                 </RequireAuth>
               } 
             />
