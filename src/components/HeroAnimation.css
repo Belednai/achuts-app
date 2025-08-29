@@ -1,0 +1,34 @@
+/* Scoped to the hero only */
+#hero-animated { position: relative; }
+
+#hero-animated .hero-line {
+  display: block;            /* preserves existing layout */
+  transform: translateX(-1.5rem);
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* Unique keyframes to avoid collisions */
+@keyframes hero-slideRightFade {
+  from { transform: translateX(-1.5rem); opacity: 0; }
+  to   { transform: translateX(0);        opacity: 1; }
+}
+
+/* Animate when container becomes visible; stagger via --d */
+#hero-animated.is-visible .hero-line {
+  animation-name: hero-slideRightFade;
+  animation-duration: 600ms;
+  animation-timing-function: cubic-bezier(.22,.61,.36,1);
+  animation-fill-mode: both;
+  animation-delay: var(--d, 0ms);
+}
+
+/* Respect reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  #hero-animated .hero-line,
+  #hero-animated.is-visible .hero-line {
+    transform: none !important;
+    opacity: 1 !important;
+    animation: none !important;
+  }
+}
