@@ -295,28 +295,36 @@ const AdminDrafts = () => {
                       
                       return (
                         <TableRow key={draft.id}>
-                          <TableCell>
-                            <div>
-                              <p className="font-medium">{draft.title || "Untitled Draft"}</p>
-                              {draft.summary && (
-                                <p className="text-sm text-muted-foreground truncate max-w-md">
-                                  {draft.summary}
-                                </p>
-                              )}
-                              <div className="flex items-center space-x-1 mt-1">
-                                {draft.tags.slice(0, 3).map(tag => (
-                                  <Badge key={tag} variant="outline" className="text-xs">
-                                    {tag}
-                                  </Badge>
-                                ))}
-                                {draft.tags.length > 3 && (
-                                  <Badge variant="outline" className="text-xs">
-                                    +{draft.tags.length - 3}
-                                  </Badge>
-                                )}
-                              </div>
-                            </div>
-                          </TableCell>
+                                                   <TableCell>
+                           <div>
+                             <Link 
+                               to={`/articles/${draft.slug}`} 
+                               target="_blank"
+                               className="hover:underline cursor-pointer"
+                             >
+                               <p className="font-medium text-primary hover:text-primary/80">
+                                 {draft.title || "Untitled Draft"}
+                               </p>
+                             </Link>
+                             {draft.summary && (
+                               <p className="text-sm text-muted-foreground truncate max-w-md">
+                                 {draft.summary}
+                               </p>
+                             )}
+                             <div className="flex items-center space-x-1 mt-1">
+                               {draft.tags.slice(0, 3).map(tag => (
+                                 <Badge key={tag} variant="outline" className="text-xs">
+                                   {tag}
+                                 </Badge>
+                               ))}
+                               {draft.tags.length > 3 && (
+                                 <Badge variant="outline" className="text-xs">
+                                   +{draft.tags.length - 3}
+                                 </Badge>
+                               )}
+                             </div>
+                           </div>
+                         </TableCell>
                           <TableCell>
                             <Badge variant="secondary">{draft.category}</Badge>
                           </TableCell>
@@ -350,12 +358,18 @@ const AdminDrafts = () => {
                                 </Button>
                               </DropdownMenuTrigger>
                               <DropdownMenuContent align="end">
-                                <DropdownMenuItem asChild>
-                                  <Link to={`/admin/articles/${draft.id}/edit`}>
-                                    <Edit className="h-4 w-4 mr-2" />
-                                    Edit Draft
-                                  </Link>
-                                </DropdownMenuItem>
+                                                               <DropdownMenuItem asChild>
+                                 <Link to={`/admin/articles/${draft.id}/edit`}>
+                                   <Edit className="h-4 w-4 mr-2" />
+                                   Edit Draft
+                                 </Link>
+                               </DropdownMenuItem>
+                               <DropdownMenuItem asChild>
+                                 <Link to={`/articles/${draft.slug}`} target="_blank">
+                                   <Eye className="h-4 w-4 mr-2" />
+                                   Preview Draft
+                                 </Link>
+                               </DropdownMenuItem>
                                 {isComplete && (
                                   <DropdownMenuItem 
                                     onClick={() => publishDraft(draft.id)}

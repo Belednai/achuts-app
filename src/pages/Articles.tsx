@@ -5,9 +5,34 @@ import ArticleCard from "@/components/ArticleCard";
 import { Button } from "@/components/ui/button";
 import { Search, Filter, Loader2 } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { storage } from "@/lib/storage";
+import type { Article } from "@/lib/types";
 
-// Extended articles dataset for pagination demo
-const allArticles = [
+// Helper function to convert storage articles to display format
+const convertStorageArticles = (storageArticles: Article[]) => {
+  return storageArticles
+    .filter(article => article.status === 'PUBLISHED' && !article.isArchived)
+    .map(article => ({
+      title: article.title,
+      summary: article.summary || '',
+      category: article.category,
+      tags: article.tags,
+      publishDate: article.publishedAt ? new Date(article.publishedAt).toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+      }) : 'Draft',
+      readingTime: article.readingTime || '5 min read',
+      slug: article.slug,
+      featured: false,
+    }))
+    .sort((a, b) => {
+      // Sort by publish date, newest first
+      const dateA = new Date(a.publishDate === 'Draft' ? '1970-01-01' : a.publishDate);
+      const dateB = new Date(b.publishDate === 'Draft' ? '1970-01-01' : b.publishDate);
+      return dateB.getTime() - dateA.getTime();
+    });
+};
   {
     title: "Constitutional Rights in the Digital Age: Privacy vs. Security in Kenya",
     summary: "An in-depth analysis of how the 2010 Constitution addresses digital privacy rights and the challenges posed by modern surveillance technologies.",
@@ -123,12 +148,35 @@ const ARTICLES_PER_PAGE = 6;
 
 const Articles = () => {
   const { toast } = useToast();
-  const [displayedArticles, setDisplayedArticles] = useState(allArticles.slice(0, ARTICLES_PER_PAGE));
+  const [articles, setArticles] = useState<any[]>([]);
+  const [displayedArticles, setDisplayedArticles] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const [filteredArticles, setFilteredArticles] = useState(allArticles);
+  const [filteredArticles, setFilteredArticles] = useState<any[]>([]);
   const loadMoreButtonRef = useRef<HTMLButtonElement>(null);
+
+  // Load articles from storage
+  useEffect(() => {
+    const loadArticles = () => {
+      try {
+        const storageArticles = storage.getArticles();
+        const convertedArticles = convertStorageArticles(storageArticles);
+        setArticles(convertedArticles);
+        setFilteredArticles(convertedArticles);
+        setDisplayedArticles(convertedArticles.slice(0, ARTICLES_PER_PAGE));
+      } catch (error) {
+        console.error('Error loading articles:', error);
+        toast({
+          title: "Error",
+          description: "Failed to load articles. Please try again.",
+          variant: "destructive"
+        });
+      }
+    };
+
+    loadArticles();
+  }, [toast]);
 
   const hasMoreArticles = displayedArticles.length < filteredArticles.length;
   const totalPages = Math.ceil(filteredArticles.length / ARTICLES_PER_PAGE);
@@ -136,20 +184,20 @@ const Articles = () => {
   // Filter articles based on search query
   useEffect(() => {
     if (searchQuery.trim() === "") {
-      setFilteredArticles(allArticles);
+      setFilteredArticles(articles);
     } else {
-      const filtered = allArticles.filter(article =>
+      const filtered = articles.filter(article =>
         article.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.summary.toLowerCase().includes(searchQuery.toLowerCase()) ||
         article.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        article.tags.some(tag => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+        article.tags.some(tag => tag.toLowerCase().includes(tag.toLowerCase()))
       );
       setFilteredArticles(filtered);
     }
     // Reset pagination when search changes
     setCurrentPage(1);
     setDisplayedArticles(filteredArticles.slice(0, ARTICLES_PER_PAGE));
-  }, [searchQuery, filteredArticles]);
+  }, [searchQuery, articles, filteredArticles]);
 
   // Update displayed articles when filtered articles change
   useEffect(() => {

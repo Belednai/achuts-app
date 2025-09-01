@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { 
   Plus, 
   Search, 
@@ -26,6 +26,7 @@ import { storage } from "@/lib/storage";
 import type { Article } from "@/lib/types";
 
 const AdminArticles = () => {
+  const [searchParams] = useSearchParams();
   const [articles, setArticles] = useState<Article[]>([]);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
@@ -33,6 +34,14 @@ const AdminArticles = () => {
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
+
+  // Handle URL parameters for archive status
+  useEffect(() => {
+    const statusParam = searchParams.get('status');
+    if (statusParam === 'ARCHIVED') {
+      setStatusFilter('ARCHIVED');
+    }
+  }, [searchParams]);
 
   useEffect(() => {
     document.title = "Articles - Admin Dashboard";
@@ -339,28 +348,36 @@ const AdminArticles = () => {
                   <TableBody>
                     {filteredArticles.map((article) => (
                       <TableRow key={article.id}>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">{article.title}</p>
-                            {article.summary && (
-                              <p className="text-sm text-muted-foreground truncate max-w-md">
-                                {article.summary}
-                              </p>
-                            )}
-                            <div className="flex items-center space-x-1 mt-1">
-                              {article.tags.slice(0, 3).map(tag => (
-                                <Badge key={tag} variant="outline" className="text-xs">
-                                  {tag}
-                                </Badge>
-                              ))}
-                              {article.tags.length > 3 && (
-                                <Badge variant="outline" className="text-xs">
-                                  +{article.tags.length - 3}
-                                </Badge>
-                              )}
-                            </div>
-                          </div>
-                        </TableCell>
+                                                 <TableCell>
+                           <div>
+                             <Link 
+                               to={`/articles/${article.slug}`} 
+                               target="_blank"
+                               className="hover:underline cursor-pointer"
+                             >
+                               <p className="font-medium text-primary hover:text-primary/80">
+                                 {article.title}
+                               </p>
+                             </Link>
+                             {article.summary && (
+                               <p className="text-sm text-muted-foreground truncate max-w-md">
+                                 {article.summary}
+                               </p>
+                             )}
+                             <div className="flex items-center space-x-1 mt-1">
+                               {article.tags.slice(0, 3).map(tag => (
+                                 <Badge key={tag} variant="outline" className="text-xs">
+                                   {tag}
+                                 </Badge>
+                               ))}
+                               {article.tags.length > 3 && (
+                                 <Badge variant="outline" className="text-xs">
+                                   +{article.tags.length - 3}
+                                 </Badge>
+                               )}
+                             </div>
+                           </div>
+                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary">{article.category}</Badge>
                         </TableCell>

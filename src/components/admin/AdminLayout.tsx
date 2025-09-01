@@ -12,7 +12,8 @@ import {
   LogOut,
   ChevronDown,
   User,
-  Shield
+  Shield,
+  Archive
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -68,6 +69,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
       label: 'Drafts',
       icon: FileEdit,
       path: '/admin/drafts'
+    },
+    {
+      id: 'archive',
+      label: 'Archive',
+      icon: Archive,
+      path: '/admin/articles?status=ARCHIVED'
     },
     {
       id: 'analytics',

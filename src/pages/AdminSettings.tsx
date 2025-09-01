@@ -24,6 +24,7 @@ import AdminLayout from "@/components/admin/AdminLayout";
 import { useAuth } from "@/contexts/AuthContext";
 import { authService } from "@/lib/auth";
 import { storage } from "@/lib/storage";
+import ImageUpload from "@/components/admin/ImageUpload";
 
 const passwordChangeSchema = z.object({
   currentPassword: z.string().min(1, "Current password is required"),
@@ -36,7 +37,8 @@ const passwordChangeSchema = z.object({
 
 const profileUpdateSchema = z.object({
   email: z.string().email("Invalid email address"),
-  username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters")
+  username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
+  profilePicture: z.string().optional()
 });
 
 type PasswordChangeValues = z.infer<typeof passwordChangeSchema>;
@@ -64,7 +66,8 @@ const AdminSettings = () => {
     resolver: zodResolver(profileUpdateSchema),
     defaultValues: {
       email: user?.email || "",
-      username: user?.username || ""
+      username: user?.username || "",
+      profilePicture: user?.profilePicture || ""
     }
   });
 
@@ -254,6 +257,16 @@ const AdminSettings = () => {
                         {profileForm.formState.errors.username.message}
                       </p>
                     )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="profilePicture">Profile Picture</Label>
+                    <ImageUpload
+                      value={profileForm.watch("profilePicture") || ""}
+                      onChange={(value) => profileForm.setValue("profilePicture", value)}
+                      placeholder="Upload your profile picture"
+                      label="Profile Picture"
+                    />
                   </div>
 
                   <div className="flex items-center space-x-2">

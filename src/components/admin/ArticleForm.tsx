@@ -18,6 +18,7 @@ import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { storage } from "@/lib/storage";
 import RichTextEditor from "./RichTextEditor";
+import ImageUpload from "./ImageUpload";
 import type { Article, CreateArticleRequest } from "@/lib/types";
 
 interface ArticleFormProps {
@@ -347,15 +348,12 @@ const ArticleForm = ({ mode, articleId }: ArticleFormProps) => {
               </div>
 
               {/* Cover Image */}
-              <div className="space-y-2">
-                <Label htmlFor="coverImage">Cover Image URL</Label>
-                <Input
-                  id="coverImage"
-                  value={formData.coverImage}
-                  onChange={(e) => setFormData(prev => ({ ...prev, coverImage: e.target.value }))}
-                  placeholder="https://example.com/image.jpg"
-                />
-              </div>
+              <ImageUpload
+                value={formData.coverImage}
+                onChange={(value) => setFormData(prev => ({ ...prev, coverImage: value }))}
+                placeholder="https://example.com/image.jpg"
+                label="Cover Image"
+              />
 
               {/* Content */}
               <div className="space-y-2">
