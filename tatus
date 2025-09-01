@@ -1,0 +1,10 @@
+[33m2812fa1[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeat/admin-actions[m[33m)[m fix: resolve Articles.tsx syntax errors and type issues, ensure successful build
+[33mf685d39[m feat: enable draft preview and article viewing, add image upload components, integrate archive navigation
+[33m7a03396[m docs: add comprehensive feature documentation and PR checklist
+[33m53dbdd4[m fix(admin): resolve RichTextEditor import issue and fix React Hook dependencies
+[33m7fe99d1[m feat(admin): implement article management and notification viewing
+[33m76b39be[m[33m ([m[1;32mfeat/admin-dashboard[m[33m)[m fix: resolve admin login authentication issues
+[33m515ec8f[m feat: complete admin dashboard with testing and documentation
+[33mea2618f[m feat: complete admin dashboard core features
+[33m4f3e0e1[m feat: implement admin notifications and articles management
+[33m085a32e[m feat: implement secure admin authentication system
