@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { 
   ArrowLeft, 
@@ -39,9 +39,9 @@ const NotificationDetail = ({ notificationId, isModal = false, onClose, onUpdate
     if (id) {
       loadNotification();
     }
-  }, [id]);
+  }, [id, loadNotification]);
 
-  const loadNotification = () => {
+  const loadNotification = useCallback(() => {
     if (!id) return;
     
     const found = storage.getNotificationById(id);
@@ -53,13 +53,13 @@ const NotificationDetail = ({ notificationId, isModal = false, onClose, onUpdate
         markAsRead(id);
       }
     }
-  };
+  }, [id, markAsRead]);
 
-  const markAsRead = (notificationId: string) => {
+  const markAsRead = useCallback((notificationId: string) => {
     storage.markNotificationAsRead(notificationId);
     setNotification(prev => prev ? { ...prev, isRead: true } : null);
     onUpdate?.();
-  };
+  }, [onUpdate]);
 
   const markAsUnread = (notificationId: string) => {
     storage.markNotificationAsUnread(notificationId);

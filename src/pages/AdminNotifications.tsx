@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { 
   Bell, 
   Check, 
@@ -47,7 +47,7 @@ const AdminNotifications = () => {
     setNotifications(allNotifications);
   };
 
-  const filterNotifications = () => {
+  const filterNotifications = useCallback(() => {
     let filtered = notifications;
 
     // Filter by search query
@@ -76,7 +76,7 @@ const AdminNotifications = () => {
     }
 
     setFilteredNotifications(filtered);
-  };
+  }, [notifications, searchQuery, filterType]);
 
   const formatDate = (dateStr: string) => {
     return new Date(dateStr).toLocaleString('en-US', {

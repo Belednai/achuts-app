@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { 
   Plus, 
@@ -50,7 +50,7 @@ const AdminArticles = () => {
     setArticles(allArticles);
   };
 
-  const filterArticles = () => {
+  const filterArticles = useCallback(() => {
     let filtered = articles;
 
     // Filter by search query
@@ -80,7 +80,7 @@ const AdminArticles = () => {
     }
 
     setFilteredArticles(filtered);
-  };
+  }, [articles, searchQuery, statusFilter, categoryFilter]);
 
   const archiveArticle = async (id: string) => {
     setIsLoading(true);

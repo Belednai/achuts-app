@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link } from "react-router-dom";
 import { 
   FileEdit, 
@@ -48,7 +48,7 @@ const AdminDrafts = () => {
     setDrafts(draftArticles);
   };
 
-  const filterDrafts = () => {
+  const filterDrafts = useCallback(() => {
     let filtered = drafts;
 
     // Filter by search query
@@ -63,7 +63,7 @@ const AdminDrafts = () => {
     }
 
     setFilteredDrafts(filtered);
-  };
+  }, [drafts, searchQuery]);
 
   const publishDraft = async (id: string) => {
     setIsLoading(true);

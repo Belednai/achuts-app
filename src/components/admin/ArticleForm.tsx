@@ -17,7 +17,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { storage } from "@/lib/storage";
-import { RichTextEditor } from "./RichTextEditor";
+import RichTextEditor from "./RichTextEditor";
 import type { Article, CreateArticleRequest } from "@/lib/types";
 
 interface ArticleFormProps {
