@@ -19,8 +19,10 @@ A comprehensive legal blog platform with a secure, owner-only admin dashboard fo
 
 ### Content Management
 - **Articles Management**: Full CRUD operations with advanced filtering
+- **Article Creation & Editing**: Comprehensive forms with validation and slug management
 - **Rich Text Editor**: Markdown-based editor with live preview
 - **Draft System**: Save, edit, and publish workflow
+- **Article Archiving**: Archive/unarchive articles with filtered views
 - **Category & Tag Management**: Organize content with metadata
 - **SEO Optimization**: Slug management and content validation
 
@@ -33,6 +35,7 @@ A comprehensive legal blog platform with a secure, owner-only admin dashboard fo
 ### Notifications System
 - **System Alerts**: INFO, WARN, and ERROR notifications
 - **Read/Unread Management**: Mark notifications and track status
+- **Notification Viewing**: Modal view for desktop, dedicated page for mobile
 - **Search & Filter**: Find notifications by type and content
 - **Real-time Updates**: Dashboard badge showing unread count
 
@@ -41,6 +44,24 @@ A comprehensive legal blog platform with a secure, owner-only admin dashboard fo
 - **Password Security**: Change passwords with validation
 - **Storage Analytics**: View data usage and system statistics
 - **System Reset**: Complete data reset functionality (danger zone)
+
+## 🛣️ Admin Routes
+
+### Core Dashboard
+- `/admin` - Main dashboard overview
+- `/admin/articles` - Articles management with filtering
+- `/admin/drafts` - Draft articles management
+- `/admin/notifications` - System notifications
+- `/admin/analytics` - Performance metrics and charts
+- `/admin/settings` - Profile and system settings
+
+### Article Management
+- `/admin/articles/new` - Create new article
+- `/admin/articles/:id/edit` - Edit existing article
+- `/admin/articles/new?status=DRAFT` - Create new draft
+
+### Notification Details
+- `/admin/notifications/:id` - View notification details (mobile-optimized)
 
 ## 🚀 Quick Start
 
@@ -89,6 +110,30 @@ ADMIN_PASSWORD=your-secure-password
 - **Development**: Uses localStorage for data persistence
 - **Production Ready**: Easy migration to backend databases
 - **Backup**: Export/import functionality for data management
+
+## ✨ Recent Features (feat/admin-actions)
+
+### Article Management Enhancements
+- **Smart Routing**: New Article CTAs route to `/admin/articles/new`, Draft CTAs to `/admin/articles/new?status=DRAFT`
+- **Comprehensive Forms**: Article creation/editing with validation, slug generation, and rich text editing
+- **Archive System**: Archive/unarchive articles with proper analytics exclusion
+- **Enhanced Filtering**: Filter by status (All, Published, Drafts, Archived) and category
+
+### Notification System Improvements
+- **Flexible Viewing**: Desktop modal + mobile page view for notifications
+- **Real-time Updates**: Unread badge updates and status changes
+- **Enhanced Actions**: Mark as read/unread, delete with confirmation dialogs
+
+### Analytics & Data
+- **Archived Articles Metric**: New analytics card showing archived content count
+- **Improved Filtering**: Public site excludes archived articles
+- **Data Migration**: Automatic migration of existing articles to support archiving
+
+### Technical Improvements
+- **Type Safety**: Enhanced TypeScript interfaces with new fields
+- **Performance**: Optimized React Hook dependencies and component rendering
+- **Build Success**: Production build verified and working
+- **Non-Destructive**: All existing functionality preserved
 
 ## 📁 Project Structure
 
