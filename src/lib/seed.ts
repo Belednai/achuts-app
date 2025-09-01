@@ -260,6 +260,10 @@ export async function initializeAdminSystem(): Promise<void> {
     console.log('Migrating articles...');
     await migrateExistingArticles();
     
+    // Run storage migrations
+    console.log('Running storage migrations...');
+    storage.migrateArticles();
+    
     // Seed initial notifications
     console.log('Seeding notifications...');
     seedNotifications();

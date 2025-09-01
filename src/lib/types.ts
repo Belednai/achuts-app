@@ -21,6 +21,8 @@ export interface Article {
   tags: string[];
   status: 'PUBLISHED' | 'DRAFT';
   publishedAt?: string;
+  isArchived: boolean;
+  archivedAt?: string;
   createdAt: string;
   updatedAt: string;
   readingTime?: string;
@@ -64,6 +66,7 @@ export interface CreateArticleRequest {
   category: string;
   tags: string[];
   status: 'PUBLISHED' | 'DRAFT';
+  slug?: string;
 }
 
 export interface UpdateArticleRequest extends Partial<CreateArticleRequest> {
@@ -77,6 +80,7 @@ export interface AnalyticsData {
   totalArticles: number;
   publishedArticles: number;
   draftArticles: number;
+  archivedArticles: number;
   topArticles: { slug: string; title: string; views: number }[];
   recentActivity: ActivityEvent[];
 }

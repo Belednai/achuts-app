@@ -192,7 +192,7 @@ const AdminDrafts = () => {
           </div>
           <div className="mt-4 sm:mt-0">
             <Button asChild>
-              <Link to="/admin/articles/new">
+              <Link to="/admin/articles/new?status=DRAFT">
                 <Plus className="h-4 w-4 mr-2" />
                 New Draft
               </Link>

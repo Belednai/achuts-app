@@ -21,8 +21,29 @@ const STORAGE_KEYS = {
   SETTINGS: 'admin_settings'
 } as const;
 
-// Generic storage utilities
+  // Generic storage utilities
 class StorageManager {
+  // Migration support
+  migrateArticles(): void {
+    const articles = this.getArticles();
+    let hasChanges = false;
+    
+    articles.forEach(article => {
+      if (article.isArchived === undefined) {
+        article.isArchived = false;
+        hasChanges = true;
+      }
+      if (article.archivedAt === undefined) {
+        article.archivedAt = undefined;
+        hasChanges = true;
+      }
+    });
+    
+    if (hasChanges) {
+      this.setArticles(articles);
+      console.log('Articles migrated to support archiving');
+    }
+  }
   private getStorageData<T>(key: string, defaultValue: T): T {
     try {
       const stored = localStorage.getItem(key);
@@ -82,7 +103,19 @@ class StorageManager {
   }
 
   getArticleBySlug(slug: string): Article | null {
-    return this.getArticles().find(a => a.slug === slug) || null;
+    return this.getArticles().find(a => a.slug === slug && !a.isArchived) || null;
+  }
+
+  getPublishedArticles(): Article[] {
+    return this.getArticles().filter(a => a.status === 'PUBLISHED' && !a.isArchived);
+  }
+
+  getDraftArticles(): Article[] {
+    return this.getArticles().filter(a => a.status === 'DRAFT' && !a.isArchived);
+  }
+
+  getArchivedArticles(): Article[] {
+    return this.getArticles().filter(a => a.isArchived);
   }
 
   addArticle(article: Article): void {
@@ -96,6 +129,34 @@ class StorageManager {
     const index = articles.findIndex(a => a.id === updatedArticle.id);
     if (index !== -1) {
       articles[index] = updatedArticle;
+      this.setArticles(articles);
+    }
+  }
+
+  archiveArticle(id: string): void {
+    const articles = this.getArticles();
+    const index = articles.findIndex(a => a.id === id);
+    if (index !== -1) {
+      articles[index] = {
+        ...articles[index],
+        isArchived: true,
+        archivedAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      this.setArticles(articles);
+    }
+  }
+
+  unarchiveArticle(id: string): void {
+    const articles = this.getArticles();
+    const index = articles.findIndex(a => a.id === id);
+    if (index !== -1) {
+      articles[index] = {
+        ...articles[index],
+        isArchived: false,
+        archivedAt: undefined,
+        updatedAt: new Date().toISOString()
+      };
       this.setArticles(articles);
     }
   }
@@ -120,11 +181,24 @@ class StorageManager {
     this.setNotifications(notifications);
   }
 
-  markNotificationRead(id: string): void {
+  getNotificationById(id: string): Notification | null {
+    return this.getNotifications().find(n => n.id === id) || null;
+  }
+
+  markNotificationAsRead(id: string): void {
     const notifications = this.getNotifications();
     const notification = notifications.find(n => n.id === id);
     if (notification) {
       notification.isRead = true;
+      this.setNotifications(notifications);
+    }
+  }
+
+  markNotificationAsUnread(id: string): void {
+    const notifications = this.getNotifications();
+    const notification = notifications.find(n => n.id === id);
+    if (notification) {
+      notification.isRead = false;
       this.setNotifications(notifications);
     }
   }
@@ -239,9 +313,10 @@ class StorageManager {
     return {
       dailyViews,
       weeklyViews,
-      totalArticles: articles.length,
-      publishedArticles: articles.filter(a => a.status === 'PUBLISHED').length,
-      draftArticles: articles.filter(a => a.status === 'DRAFT').length,
+      totalArticles: articles.filter(a => !a.isArchived).length,
+      publishedArticles: articles.filter(a => a.status === 'PUBLISHED' && !a.isArchived).length,
+      draftArticles: articles.filter(a => a.status === 'DRAFT' && !a.isArchived).length,
+      archivedArticles: articles.filter(a => a.isArchived).length,
       topArticles,
       recentActivity: activity.slice(0, 10)
     };

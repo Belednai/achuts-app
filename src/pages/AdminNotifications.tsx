@@ -9,7 +9,8 @@ import {
   Trash2,
   CheckCheck,
   Filter,
-  Search
+  Search,
+  Eye
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -28,6 +29,8 @@ const AdminNotifications = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filterType, setFilterType] = useState<"ALL" | "UNREAD" | "READ" | "INFO" | "WARN" | "ERROR">("ALL");
   const [isLoading, setIsLoading] = useState(false);
+  const [selectedNotification, setSelectedNotification] = useState<Notification | null>(null);
+  const [showViewModal, setShowViewModal] = useState(false);
   const { toast } = useToast();
 
   useEffect(() => {
@@ -83,6 +86,11 @@ const AdminNotifications = () => {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const viewNotification = (notification: Notification) => {
+    setSelectedNotification(notification);
+    setShowViewModal(true);
   };
 
   const getNotificationIcon = (type: Notification['type']) => {
@@ -330,6 +338,15 @@ const AdminNotifications = () => {
                         </div>
                         
                         <div className="flex items-center space-x-2 ml-4">
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => viewNotification(notification)}
+                            title="View notification details"
+                          >
+                            <Eye className="h-4 w-4" />
+                          </Button>
+                          
                           {!notification.isRead && (
                             <Button
                               variant="ghost"
@@ -405,6 +422,70 @@ const AdminNotifications = () => {
             </Card>
           )}
         </div>
+
+        {/* View Notification Modal */}
+        {showViewModal && selectedNotification && (
+          <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
+            <div className="bg-background rounded-lg shadow-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="p-4 border-b flex items-center justify-between">
+                <h2 className="text-lg font-semibold">Notification Details</h2>
+                <Button variant="ghost" size="sm" onClick={() => setShowViewModal(false)}>
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+              <div className="p-4">
+                <div className="space-y-4">
+                  <div className="flex items-center gap-3">
+                    {getNotificationIcon(selectedNotification.type)}
+                    <div>
+                      <h3 className="text-xl font-semibold">{selectedNotification.title}</h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Badge variant={getBadgeVariant(selectedNotification.type)}>
+                          {selectedNotification.type}
+                        </Badge>
+                        {!selectedNotification.isRead && (
+                          <Badge variant="secondary">NEW</Badge>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div className="prose prose-sm max-w-none">
+                    <div className="whitespace-pre-wrap text-sm leading-relaxed">
+                      {selectedNotification.body}
+                    </div>
+                  </div>
+                  
+                  <div className="text-sm text-muted-foreground">
+                    Created: {formatDate(selectedNotification.createdAt)}
+                  </div>
+                  
+                  <div className="flex gap-2 pt-4 border-t">
+                    {!selectedNotification.isRead && (
+                      <Button
+                        onClick={() => {
+                          markAsRead(selectedNotification.id);
+                          setShowViewModal(false);
+                        }}
+                        className="flex-1"
+                      >
+                        <Check className="h-4 w-4 mr-2" />
+                        Mark as Read
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      onClick={() => setShowViewModal(false)}
+                      className="flex-1"
+                    >
+                      Close
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </AdminLayout>
   );

@@ -29,7 +29,7 @@ const AdminArticles = () => {
   const [articles, setArticles] = useState<Article[]>([]);
   const [filteredArticles, setFilteredArticles] = useState<Article[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
-  const [statusFilter, setStatusFilter] = useState<"ALL" | "PUBLISHED" | "DRAFT">("ALL");
+  const [statusFilter, setStatusFilter] = useState<"ALL" | "PUBLISHED" | "DRAFT" | "ARCHIVED">("ALL");
   const [categoryFilter, setCategoryFilter] = useState<string>("ALL");
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
@@ -65,8 +65,13 @@ const AdminArticles = () => {
     }
 
     // Filter by status
-    if (statusFilter !== "ALL") {
-      filtered = filtered.filter(article => article.status === statusFilter);
+    if (statusFilter === "ARCHIVED") {
+      filtered = filtered.filter(article => article.isArchived);
+    } else if (statusFilter !== "ALL") {
+      filtered = filtered.filter(article => article.status === statusFilter && !article.isArchived);
+    } else {
+      // Show all non-archived articles by default
+      filtered = filtered.filter(article => !article.isArchived);
     }
 
     // Filter by category
@@ -75,6 +80,64 @@ const AdminArticles = () => {
     }
 
     setFilteredArticles(filtered);
+  };
+
+  const archiveArticle = async (id: string) => {
+    setIsLoading(true);
+    try {
+      storage.archiveArticle(id);
+      loadArticles();
+      
+      toast({
+        title: "Article archived",
+        description: "The article has been archived and is no longer public.",
+      });
+
+      // Log activity
+      storage.addActivity({
+        id: Date.now().toString(),
+        type: 'ARTICLE_UPDATED',
+        description: 'Article archived',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to archive article. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const unarchiveArticle = async (id: string) => {
+    setIsLoading(true);
+    try {
+      storage.unarchiveArticle(id);
+      loadArticles();
+      
+      toast({
+        title: "Article unarchived",
+        description: "The article has been restored and is now public again.",
+      });
+
+      // Log activity
+      storage.addActivity({
+        id: Date.now().toString(),
+        type: 'ARTICLE_UPDATED',
+        description: 'Article unarchived',
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to unarchive article. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const deleteArticle = async (id: string) => {
@@ -119,8 +182,9 @@ const AdminArticles = () => {
     return [...new Set(categories)].sort();
   };
 
-  const publishedCount = articles.filter(a => a.status === 'PUBLISHED').length;
-  const draftCount = articles.filter(a => a.status === 'DRAFT').length;
+  const publishedCount = articles.filter(a => a.status === 'PUBLISHED' && !a.isArchived).length;
+  const draftCount = articles.filter(a => a.status === 'DRAFT' && !a.isArchived).length;
+  const archivedCount = articles.filter(a => a.isArchived).length;
 
   return (
     <AdminLayout>
@@ -144,7 +208,7 @@ const AdminArticles = () => {
         </div>
 
         {/* Stats */}
-        <div className="grid gap-4 md:grid-cols-3">
+        <div className="grid gap-4 md:grid-cols-4">
           <Card>
             <CardContent className="p-4">
               <div className="flex items-center space-x-2">
@@ -180,6 +244,18 @@ const AdminArticles = () => {
               </div>
             </CardContent>
           </Card>
+
+          <Card>
+            <CardContent className="p-4">
+              <div className="flex items-center space-x-2">
+                <Eye className="h-4 w-4 text-orange-500" />
+                <div>
+                  <p className="text-sm text-muted-foreground">Archived</p>
+                  <p className="text-lg font-semibold">{archivedCount}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
         {/* Filters */}
@@ -211,6 +287,7 @@ const AdminArticles = () => {
                     <SelectItem value="ALL">All Status</SelectItem>
                     <SelectItem value="PUBLISHED">Published</SelectItem>
                     <SelectItem value="DRAFT">Draft</SelectItem>
+                    <SelectItem value="ARCHIVED">Archived</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -324,6 +401,44 @@ const AdminArticles = () => {
                                   Edit
                                 </Link>
                               </DropdownMenuItem>
+                              {!article.isArchived ? (
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem
+                                      onSelect={(e) => e.preventDefault()}
+                                      className="text-orange-600 focus:text-orange-600"
+                                    >
+                                      <Eye className="h-4 w-4 mr-2" />
+                                      Archive
+                                    </DropdownMenuItem>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Archive Article</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        Are you sure you want to archive "{article.title}"? It won't be public but remains recoverable.
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => archiveArticle(article.id)}
+                                        className="bg-orange-600 text-white hover:bg-orange-700"
+                                      >
+                                        Archive
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              ) : (
+                                <DropdownMenuItem
+                                  onClick={() => unarchiveArticle(article.id)}
+                                  className="text-green-600 focus:text-green-600"
+                                >
+                                  <Eye className="h-4 w-4 mr-2" />
+                                  Unarchive
+                                </DropdownMenuItem>
+                              )}
                               <DropdownMenuSeparator />
                               <AlertDialog>
                                 <AlertDialogTrigger asChild>
