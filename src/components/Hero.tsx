@@ -38,7 +38,7 @@ const Hero = () => {
   }, []);
 
   return (
-    <section className="relative min-h-[80vh] flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-[90vh] sm:min-h-[80vh] flex items-center justify-center overflow-hidden py-8 sm:py-12">
       {/* Background Image */}
       <div className="absolute inset-0 z-0">
         <img
@@ -51,27 +51,27 @@ const Hero = () => {
 
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-        <div className="max-w-4xl mx-auto">
-          <section id="hero-animated" className="hero-banner">
-            <h1 className="hero-title text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground mb-6 leading-tight">
-              <span className="hero-line" data-delay="0">My Legal</span>
-              <span className="hero-line text-primary-foreground/90" data-delay="120">Notebook</span>
+        <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8">
+          <section id="hero-animated" className="hero-banner space-y-4 sm:space-y-6">
+            <h1 className="hero-title text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-primary-foreground leading-tight">
+              <span className="hero-line block" data-delay="0">My Legal</span>
+              <span className="hero-line block text-primary-foreground/90" data-delay="120">Notebook</span>
             </h1>
-            <p className="hero-tagline hero-line text-xl md:text-2xl text-primary-foreground/90 mb-8 max-w-2xl mx-auto leading-relaxed" data-delay="240">
+            <p className="hero-tagline hero-line text-base sm:text-lg md:text-xl lg:text-2xl text-primary-foreground/90 max-w-2xl mx-auto leading-relaxed px-2" data-delay="240">
               Legal insights, constitutional commentary, and case analyses from a Kenyan perspective. Exploring the intersection of law, justice, and society.
             </p>
           </section>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <Link to="/articles">
-              <Button variant="hero" size="lg" className="group">
+          <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center px-4">
+            <Link to="/articles" className="w-full sm:w-auto">
+              <Button variant="hero" size="lg" className="group w-full sm:w-auto">
                 <BookOpen className="w-5 h-5 mr-2" />
                 Explore Articles
                 <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
               </Button>
             </Link>
-            <Link to="/about">
-              <Button variant="outline" size="lg" className="bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary hover:text-primary-foreground">
+            <Link to="/about" className="w-full sm:w-auto">
+              <Button variant="outline" size="lg" className="bg-primary-foreground/10 border-primary-foreground/30 text-primary-foreground hover:bg-primary hover:text-primary-foreground w-full sm:w-auto">
                 <PenTool className="w-5 h-5 mr-2" />
                 My Story
               </Button>
@@ -79,18 +79,18 @@ const Hero = () => {
           </div>
 
           {/* Stats */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-2xl mx-auto">
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary-foreground mb-2">15+</div>
-              <div className="text-primary-foreground/80">Articles Publiesed</div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 max-w-2xl mx-auto pt-4 sm:pt-8">
+            <div className="text-center space-y-1">
+              <div className="text-2xl sm:text-3xl font-bold text-primary-foreground">15+</div>
+              <div className="text-sm sm:text-base text-primary-foreground/80">Articles Published</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary-foreground mb-2">5</div>
-              <div className="text-primary-foreground/80">Years Experience</div>
+            <div className="text-center space-y-1">
+              <div className="text-2xl sm:text-3xl font-bold text-primary-foreground">5</div>
+              <div className="text-sm sm:text-base text-primary-foreground/80">Years Experience</div>
             </div>
-            <div className="text-center">
-              <div className="text-3xl font-bold text-primary-foreground mb-2">LL.B</div>
-              <div className="text-primary-foreground/80">Mount Kenya University</div>
+            <div className="text-center space-y-1">
+              <div className="text-2xl sm:text-3xl font-bold text-primary-foreground">LL.B</div>
+              <div className="text-sm sm:text-base text-primary-foreground/80">Mount Kenya University</div>
             </div>
           </div>
         </div>
