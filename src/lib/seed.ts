@@ -300,8 +300,18 @@ export async function forceInitializeAdminSystem(): Promise<void> {
   // Clear all data first
   storage.clearAllData();
   
+  // Force update credentials to new ones
+  await authService.forceUpdateCredentials();
+  
   // Then reinitialize
   await initializeAdminSystem();
+}
+
+// Update credentials only (without clearing all data)
+export async function updateAdminCredentials(): Promise<void> {
+  console.log('Updating admin credentials...');
+  await authService.forceUpdateCredentials();
+  console.log('Admin credentials updated successfully');
 }
 
 // Reset admin system (for development/testing)

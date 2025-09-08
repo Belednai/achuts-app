@@ -1,9 +1,10 @@
 import { useState, useCallback, useRef, useEffect } from "react";
+import { useSearchParams } from "react-router-dom";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ArticleCard from "@/components/ArticleCard";
 import { Button } from "@/components/ui/button";
-import { Search, Filter, Loader2 } from "lucide-react";
+import { Search, Filter, Loader2, X } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { storage } from "@/lib/storage";
 import type { Article } from "@/lib/types";
@@ -38,12 +39,14 @@ const ARTICLES_PER_PAGE = 6;
 
 const Articles = () => {
   const { toast } = useToast();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [articles, setArticles] = useState<ReturnType<typeof convertStorageArticles>>([]);
   const [displayedArticles, setDisplayedArticles] = useState<ReturnType<typeof convertStorageArticles>>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isLoading, setIsLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredArticles, setFilteredArticles] = useState<ReturnType<typeof convertStorageArticles>>([]);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const loadMoreButtonRef = useRef<HTMLButtonElement>(null);
 
   // Load articles from storage
@@ -66,6 +69,19 @@ const Articles = () => {
     };
     loadArticles();
   }, [toast]);
+
+  // Handle category filter from URL
+  useEffect(() => {
+    const categoryFromUrl = searchParams.get('category');
+    if (categoryFromUrl) {
+      setSelectedCategory(categoryFromUrl);
+      const categoryArticles = storage.getArticlesByCategory(categoryFromUrl);
+      const convertedCategoryArticles = convertStorageArticles(categoryArticles);
+      setFilteredArticles(convertedCategoryArticles);
+      setDisplayedArticles(convertedCategoryArticles.slice(0, ARTICLES_PER_PAGE));
+      setCurrentPage(1);
+    }
+  }, [searchParams]);
 
   // Calculate pagination
   const hasMoreArticles = displayedArticles.length < filteredArticles.length;
@@ -90,6 +106,14 @@ const Articles = () => {
 
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchQuery(e.target.value);
+  };
+
+  const clearCategoryFilter = () => {
+    setSelectedCategory(null);
+    setSearchParams({});
+    setFilteredArticles(articles);
+    setDisplayedArticles(articles.slice(0, ARTICLES_PER_PAGE));
+    setCurrentPage(1);
   };
 
   const loadMoreArticles = () => {
@@ -150,6 +174,27 @@ const Articles = () => {
                 ? `No articles found for "${searchQuery}"`
                 : `Showing ${displayedArticles.length} of ${filteredArticles.length} articles for "${searchQuery}"`
               }
+            </div>
+          )}
+
+          {/* Category Filter Display */}
+          {selectedCategory && (
+            <div className="mb-6 flex items-center gap-3">
+              <div className="flex items-center gap-2 bg-primary/10 text-primary px-3 py-2 rounded-lg">
+                <span className="text-sm font-medium">Category:</span>
+                <span className="text-sm">{selectedCategory}</span>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearCategoryFilter}
+                  className="h-6 w-6 p-0 hover:bg-primary/20"
+                >
+                  <X className="w-3 h-3" />
+                </Button>
+              </div>
+              <span className="text-sm text-muted-foreground">
+                {filteredArticles.length} article{filteredArticles.length !== 1 ? 's' : ''} found
+              </span>
             </div>
           )}
 

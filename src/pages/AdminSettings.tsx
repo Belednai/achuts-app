@@ -38,6 +38,7 @@ const passwordChangeSchema = z.object({
 const profileUpdateSchema = z.object({
   email: z.string().email("Invalid email address"),
   username: z.string().min(3, "Username must be at least 3 characters").max(20, "Username must be less than 20 characters"),
+  displayName: z.string().min(2, "Display name must be at least 2 characters").max(50, "Display name must be less than 50 characters"),
   profilePicture: z.string().optional()
 });
 
@@ -67,6 +68,7 @@ const AdminSettings = () => {
     defaultValues: {
       email: user?.email || "",
       username: user?.username || "",
+      displayName: user?.displayName || "",
       profilePicture: user?.profilePicture || ""
     }
   });
@@ -78,7 +80,8 @@ const AdminSettings = () => {
     if (user) {
       profileForm.reset({
         email: user.email,
-        username: user.username
+        username: user.username,
+        displayName: user.displayName
       });
     }
   }, [user, profileForm]);
@@ -139,7 +142,8 @@ const AdminSettings = () => {
         currentPassword,
         values.email,
         values.username,
-        user?.passwordHash || "" // Keep same password
+        user?.passwordHash || "", // Keep same password
+        values.displayName
       );
 
       if (success) {
@@ -255,6 +259,21 @@ const AdminSettings = () => {
                     {profileForm.formState.errors.username && (
                       <p className="text-sm text-destructive">
                         {profileForm.formState.errors.username.message}
+                      </p>
+                    )}
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label htmlFor="displayName">Display Name</Label>
+                    <Input
+                      id="displayName"
+                      type="text"
+                      {...profileForm.register("displayName")}
+                      className={profileForm.formState.errors.displayName ? "border-destructive" : ""}
+                    />
+                    {profileForm.formState.errors.displayName && (
+                      <p className="text-sm text-destructive">
+                        {profileForm.formState.errors.displayName.message}
                       </p>
                     )}
                   </div>

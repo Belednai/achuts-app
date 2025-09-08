@@ -129,7 +129,7 @@ describe('Admin Storage Layer', () => {
       };
 
       storage.addNotification(notification);
-      storage.markNotificationRead('1');
+      storage.markNotificationAsRead('1');
       
       const notifications = storage.getNotifications();
       expect(notifications[0].isRead).toBe(true);

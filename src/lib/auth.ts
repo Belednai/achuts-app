@@ -240,22 +240,26 @@ export class AuthService {
     storage.addActivity(event);
   }
 
-  // Initialize default owner account if none exists
+  // Initialize default owner account if none exists, or update existing one
   async initializeOwnerAccount(): Promise<void> {
     const users = storage.getUsers();
-    if (users.length === 0) {
-      // Use hard-coded defaults (environment variables not available in browser)
-      const email = 'admin@achutslegal.com';
-      const username = 'admin';
-      const password = 'admin123!';
+    
+    // Use hard-coded defaults (environment variables not available in browser)
+    const email = 'achutpanchol224@gmail.com';
+    const username = 'achutpanchol224@gmail.com';
+    const displayName = 'Achut Atem';
+    const password = 'Abraham@2025';
 
-      try {
-        const hashedPassword = await hashPassword(password);
-        
+    try {
+      const hashedPassword = await hashPassword(password);
+      
+      if (users.length === 0) {
+        // Create new owner account
         const defaultOwner: User = {
           id: generateToken(),
           email,
           username,
+          displayName,
           passwordHash: hashedPassword,
           role: 'OWNER',
           createdAt: new Date().toISOString(),
@@ -263,21 +267,97 @@ export class AuthService {
         };
 
         storage.setUsers([defaultOwner]);
-
         console.log('Default owner account created:');
-        console.log(`Email: ${email}`);
-        console.log(`Username: ${username}`);
-        console.log(`Password: ${password}`);
-        console.log('Please change these credentials after first login.');
-      } catch (error) {
-        console.error('Error creating default owner account:', error);
-        throw error;
+      } else {
+        // Update existing owner account with new credentials
+        const existingOwner = users.find(u => u.role === 'OWNER');
+        if (existingOwner) {
+          const updatedOwner: User = {
+            ...existingOwner,
+            email,
+            username,
+            displayName,
+            passwordHash: hashedPassword,
+            updatedAt: new Date().toISOString()
+          };
+          
+          const updatedUsers = users.map(u => u.id === existingOwner.id ? updatedOwner : u);
+          storage.setUsers(updatedUsers);
+          console.log('Owner account updated with new credentials:');
+        } else {
+          // No owner found, create one
+          const defaultOwner: User = {
+            id: generateToken(),
+            email,
+            username,
+            displayName,
+            passwordHash: hashedPassword,
+            role: 'OWNER',
+            createdAt: new Date().toISOString(),
+            updatedAt: new Date().toISOString()
+          };
+          
+          storage.setUsers([...users, defaultOwner]);
+          console.log('New owner account created:');
+        }
       }
+      
+      console.log(`Email: ${email}`);
+      console.log(`Username: ${username}`);
+      console.log(`Password: ${password}`);
+    } catch (error) {
+      console.error('Error initializing owner account:', error);
+      throw error;
+    }
+  }
+
+  // Force update credentials (for system initialization)
+  async forceUpdateCredentials(): Promise<void> {
+    const email = 'achutpanchol224@gmail.com';
+    const username = 'achutpanchol224@gmail.com';
+    const displayName = 'Achut Atem';
+    const password = 'Abraham@2025';
+    
+    const hashedPassword = await hashPassword(password);
+    const users = storage.getUsers();
+    
+    // Find existing owner or create new one
+    const existingOwner = users.find(u => u.role === 'OWNER');
+    
+    if (existingOwner) {
+      // Update existing owner
+      const updatedOwner: User = {
+        ...existingOwner,
+        email,
+        username,
+        displayName,
+        passwordHash: hashedPassword,
+        updatedAt: new Date().toISOString()
+      };
+      
+      const updatedUsers = users.map(u => u.id === existingOwner.id ? updatedOwner : u);
+      storage.setUsers(updatedUsers);
+      console.log('Owner credentials force updated');
+    } else {
+      // Create new owner
+      const newOwner: User = {
+        id: generateToken(),
+        email,
+        username,
+        displayName,
+        passwordHash: hashedPassword,
+        role: 'OWNER',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString()
+      };
+      
+      storage.setUsers([...users, newOwner]);
+      console.log('New owner account created with updated credentials');
     }
   }
 
   // Rotate owner credentials
-  async rotateCredentials(currentPassword: string, newEmail: string, newUsername: string, newPassword: string): Promise<boolean> {
+  async rotateCredentials(currentPassword: string, newEmail: string, newUsername: string, newPassword: string, newDisplayName?: string): Promise<boolean> {
     this.requireOwner();
     
     const user = this.getCurrentUser()!;
@@ -293,6 +373,7 @@ export class AuthService {
       ...user,
       email: newEmail,
       username: newUsername,
+      displayName: newDisplayName || user.displayName,
       passwordHash: hashedNewPassword,
       updatedAt: new Date().toISOString()
     };

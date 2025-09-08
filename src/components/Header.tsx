@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, Scale } from "lucide-react";
+import { Menu, X, Scale, Shield } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 
@@ -50,8 +50,14 @@ const Header = () => {
             ))}
           </nav>
 
-          {/* Newsletter CTA */}
-          <div className="hidden md:block">
+          {/* Newsletter CTA and Admin */}
+          <div className="hidden md:flex items-center space-x-2">
+            <Link to="/admin/login">
+              <Button variant="outline" size="sm" className="flex items-center space-x-1">
+                <Shield className="h-4 w-4" />
+                <span>Admin</span>
+              </Button>
+            </Link>
             <Link to="/subscribe">
               <Button variant="legal" size="sm" onClick={handleSubscribe}>
                 Subscribe
@@ -90,7 +96,13 @@ const Header = () => {
                   {item.name}
                 </Link>
               ))}
-              <div className="px-3 py-2">
+              <div className="px-3 py-2 space-y-2">
+                <Link to="/admin/login" className="block">
+                  <Button variant="outline" size="sm" className="w-full flex items-center justify-center space-x-1">
+                    <Shield className="h-4 w-4" />
+                    <span>Admin</span>
+                  </Button>
+                </Link>
                 <Link to="/subscribe" className="block">
                   <Button variant="legal" size="sm" className="w-full" onClick={handleSubscribe}>
                     Subscribe

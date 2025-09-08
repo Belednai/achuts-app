@@ -122,7 +122,7 @@ const AdminNotifications = () => {
   const markAsRead = async (id: string) => {
     setIsLoading(true);
     try {
-      storage.markNotificationRead(id);
+      storage.markNotificationAsRead(id);
       loadNotifications();
       
       toast({

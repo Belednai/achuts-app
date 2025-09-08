@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { 
   Menu, 
@@ -10,7 +10,6 @@ import {
   BarChart3, 
   Settings, 
   LogOut,
-  ChevronDown,
   User,
   Shield,
   Archive
@@ -35,12 +34,10 @@ interface NavItem {
 
 const AdminLayout = ({ children }: AdminLayoutProps) => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
   const { user, logout } = useAuth();
   const location = useLocation();
   const navigate = useNavigate();
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Navigation items
   const navItems: NavItem[] = [
@@ -105,38 +102,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
     return () => clearInterval(interval);
   }, []);
 
-  // Close dropdown when clicking outside
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
-        setDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
-
-  // Close dropdown on escape key
-  useEffect(() => {
-    const handleEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') {
-        setDropdownOpen(false);
-      }
-    };
-
-    document.addEventListener('keydown', handleEscape);
-    return () => document.removeEventListener('keydown', handleEscape);
-  }, []);
 
   const handleLogout = () => {
     logout();
     navigate('/admin/login');
   };
 
-  const toggleDropdown = () => {
-    setDropdownOpen(!dropdownOpen);
-  };
 
   const isActivePath = (path: string) => {
     if (path === '/admin') {
@@ -177,87 +148,27 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
             {/* Right side */}
             <div className="flex items-center space-x-4">
-              {/* User Menu Dropdown */}
-              <div className="relative" ref={dropdownRef}>
-                <Button
-                  variant="ghost"
-                  className="flex items-center space-x-2 h-10"
-                  onClick={toggleDropdown}
-                  onMouseEnter={() => setDropdownOpen(true)}
-                  aria-haspopup="true"
-                  aria-expanded={dropdownOpen}
-                >
+              {/* User Info and Logout */}
+              <div className="flex items-center space-x-3">
+                <div className="flex items-center space-x-2">
                   <Avatar className="h-7 w-7">
                     <AvatarFallback className="bg-primary text-primary-foreground text-xs">
-                      {user ? getInitials(user.username) : 'A'}
+                      {user ? getInitials(user.displayName || user.username) : 'A'}
                     </AvatarFallback>
                   </Avatar>
                   <span className="hidden sm:block text-sm">
-                    {user?.username || 'Admin'}
+                    {user?.displayName || user?.username || 'Admin'}
                   </span>
-                  <ChevronDown className="h-4 w-4" />
+                </div>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="text-destructive hover:bg-destructive/10"
+                >
+                  <LogOut className="h-4 w-4 mr-2" />
+                  Logout
                 </Button>
-
-                {/* W3Schools-style Dropdown Menu */}
-                {dropdownOpen && (
-                  <div
-                    className="absolute right-0 mt-1 w-56 bg-card border rounded-md shadow-lg z-50"
-                    onMouseLeave={() => setDropdownOpen(false)}
-                  >
-                    <div className="py-1">
-                      {/* User Info */}
-                      <div className="px-4 py-3 border-b">
-                        <div className="flex items-center space-x-3">
-                          <Avatar className="h-10 w-10">
-                            <AvatarFallback className="bg-primary text-primary-foreground">
-                              {user ? getInitials(user.username) : 'A'}
-                            </AvatarFallback>
-                          </Avatar>
-                          <div>
-                            <p className="text-sm font-medium">{user?.username}</p>
-                            <p className="text-xs text-muted-foreground">{user?.email}</p>
-                            <Badge variant="secondary" className="text-xs mt-1">
-                              {user?.role}
-                            </Badge>
-                          </div>
-                        </div>
-                      </div>
-
-                      {/* Menu Items */}
-                      <div className="py-1">
-                        {navItems.map((item) => (
-                          <Link
-                            key={item.id}
-                            to={item.path}
-                            className={`flex items-center px-4 py-2 text-sm hover:bg-accent hover:text-accent-foreground transition-colors ${
-                              isActivePath(item.path) ? 'bg-accent text-accent-foreground' : ''
-                            }`}
-                            onClick={() => setDropdownOpen(false)}
-                          >
-                            <item.icon className="h-4 w-4 mr-3" />
-                            {item.label}
-                            {item.badge && (
-                              <Badge variant="destructive" className="ml-auto text-xs">
-                                {item.badge}
-                              </Badge>
-                            )}
-                          </Link>
-                        ))}
-                      </div>
-
-                      {/* Separator */}
-                      <div className="border-t">
-                        <button
-                          onClick={handleLogout}
-                          className="flex items-center w-full px-4 py-2 text-sm text-destructive hover:bg-destructive/10 transition-colors"
-                        >
-                          <LogOut className="h-4 w-4 mr-3" />
-                          Logout
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             </div>
           </div>

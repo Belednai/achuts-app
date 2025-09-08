@@ -1,42 +1,53 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { Link } from "react-router-dom";
+import { storage } from "@/lib/storage";
+import { useEffect, useState } from "react";
 
 const Categories = () => {
+  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
+
+  // Get actual article counts for each category
+  useEffect(() => {
+    const articles = storage.getPublishedArticles();
+    const counts: Record<string, number> = {};
+    
+    articles.forEach(article => {
+      counts[article.category] = (counts[article.category] || 0) + 1;
+    });
+    
+    setCategoryCounts(counts);
+  }, []);
+
   const categories = [
     {
       name: "Constitutional Law",
       description: "Analysis of constitutional rights, principles, and landmark decisions",
-      articleCount: 12,
       slug: "constitutional-law"
     },
     {
       name: "Criminal Law",
       description: "Criminal procedure, evidence, and recent court decisions",
-      articleCount: 8,
       slug: "criminal-law"
     },
     {
       name: "Property Law",
       description: "Land rights, succession, and property-related legal matters",
-      articleCount: 6,
       slug: "property-law"
     },
     {
       name: "Employment Law",
       description: "Workplace rights, labor relations, and employment regulations",
-      articleCount: 4,
       slug: "employment-law"
     },
     {
       name: "Corporate Law",
       description: "Business law, corporate governance, and commercial transactions",
-      articleCount: 5,
       slug: "corporate-law"
     },
     {
       name: "Environmental Law",
       description: "Environmental protection, climate change, and sustainability law",
-      articleCount: 3,
       slug: "environmental-law"
     }
   ];
@@ -58,16 +69,17 @@ const Categories = () => {
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {categories.map((category) => (
-              <div
+              <Link
                 key={category.slug}
-                className="group p-6 rounded-xl border border-border hover:shadow-card transition-all duration-300 cursor-pointer bg-card"
+                to={`/articles?category=${encodeURIComponent(category.name)}`}
+                className="group p-6 rounded-xl border border-border hover:shadow-card transition-all duration-300 cursor-pointer bg-card block"
               >
                 <div className="flex items-center justify-between mb-4">
                   <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center">
                     <div className="w-6 h-6 bg-primary rounded opacity-80 group-hover:opacity-100 transition-opacity" />
                   </div>
                   <span className="text-sm text-muted-foreground bg-muted px-2 py-1 rounded">
-                    {category.articleCount} articles
+                    {categoryCounts[category.name] || 0} articles
                   </span>
                 </div>
                 
@@ -79,13 +91,13 @@ const Categories = () => {
                   {category.description}
                 </p>
                 
-                <div className="mt-4 flex items-center text-primary text-sm font-medium">
+                <div className="mt-4 flex items-center text-primary text-sm font-medium group-hover:text-primary/80 transition-colors">
                   Browse articles
                   <svg className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                   </svg>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>

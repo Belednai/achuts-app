@@ -97,6 +97,23 @@ Email: admin@achutslegal.com
 - Use default credentials for first login
 - Change credentials in Settings > Security tab
 
+## 🎨 Design & Brand
+
+### Brand Colors
+- **Primary Brand Color**: `#2b404d` (HSL: 207, 28%, 24%)
+- **Usage**: Primary CTAs, primary links, active navigation states, focus indicators
+- **State Variants**: Hover, active, focus, and subtle background variants derived from the primary color
+
+### Feature Flag: New Brand Color
+The new brand color can be toggled using the `ENABLE_NEW_BRAND_COLOR` feature flag:
+- **Development**: Automatically enabled (ON)
+- **Production**: Disabled (OFF) until QA completion and sign-off
+
+#### Rollback Steps
+1. **Immediate Rollback**: Set `ENABLE_NEW_BRAND_COLOR=false` in environment
+2. **Code Rollback**: Revert to previous commit: `git revert <commit-hash>`
+3. **CSS Rollback**: Remove import of `index-new-brand.css` from `src/index.css`
+
 ## 🎨 Environment Configuration
 
 ### Environment Variables (Optional)
@@ -104,6 +121,7 @@ Email: admin@achutslegal.com
 ADMIN_EMAIL=your-admin@email.com
 ADMIN_USERNAME=your-username
 ADMIN_PASSWORD=your-secure-password
+ENABLE_NEW_BRAND_COLOR=true
 ```
 
 ### Data Storage

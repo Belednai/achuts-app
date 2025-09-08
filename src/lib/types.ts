@@ -4,6 +4,7 @@ export interface User {
   id: string;
   email: string;
   username: string;
+  displayName: string;
   passwordHash: string;
   role: 'OWNER';
   createdAt: string;

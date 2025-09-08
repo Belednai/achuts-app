@@ -3,17 +3,16 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { Eye, EyeOff, Shield, AlertTriangle } from "lucide-react";
+import { Eye, EyeOff, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Checkbox } from "@/components/ui/checkbox";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { useToast } from "@/hooks/use-toast";
 import { useAuth } from "@/contexts/AuthContext";
 import type { LoginRequest } from "@/lib/types";
-import { forceInitializeAdminSystem } from "@/lib/seed";
+import { forceInitializeAdminSystem, updateAdminCredentials } from "@/lib/seed";
 
 const loginSchema = z.object({
   usernameOrEmail: z.string().min(1, "Username or email is required").max(100),
@@ -125,39 +124,6 @@ const AdminLogin = () => {
           </p>
         </div>
 
-        {/* Default credentials info */}
-        <Alert>
-          <AlertTriangle className="h-4 w-4" />
-          <AlertDescription className="text-sm">
-            <strong>Default credentials:</strong><br />
-            Username: <code className="bg-muted px-1 rounded">admin</code><br />
-            Password: <code className="bg-muted px-1 rounded">admin123!</code><br />
-            <em>Please change these after first login.</em>
-            <div className="mt-2">
-              <Button 
-                variant="outline" 
-                size="sm" 
-                onClick={async () => {
-                  try {
-                    await forceInitializeAdminSystem();
-                    toast({
-                      title: "System reinitialized",
-                      description: "Admin system has been reset and reinitialized. Try logging in again.",
-                    });
-                  } catch (error) {
-                    toast({
-                      title: "Initialization failed", 
-                      description: "Check console for details.",
-                      variant: "destructive"
-                    });
-                  }
-                }}
-              >
-                Reset & Reinitialize System
-              </Button>
-            </div>
-          </AlertDescription>
-        </Alert>
 
         {/* Login Form */}
         <Card>
@@ -253,8 +219,54 @@ const AdminLogin = () => {
         </Card>
 
         {/* Footer */}
-        <div className="text-center text-sm text-muted-foreground">
+        <div className="text-center text-sm text-muted-foreground space-y-2">
           <p>© 2024 Achut's Legal Notebook. All rights reserved.</p>
+          <div className="flex justify-center gap-2">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={async () => {
+                try {
+                  await updateAdminCredentials();
+                  toast({
+                    title: "Credentials updated",
+                    description: "Admin credentials have been updated. Try logging in again.",
+                  });
+                } catch (error) {
+                  toast({
+                    title: "Update failed", 
+                    description: "Check console for details.",
+                    variant: "destructive"
+                  });
+                }
+              }}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              Update Credentials
+            </Button>
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={async () => {
+                try {
+                  await forceInitializeAdminSystem();
+                  toast({
+                    title: "System reinitialized",
+                    description: "Admin system has been reset with new credentials.",
+                  });
+                } catch (error) {
+                  toast({
+                    title: "Initialization failed", 
+                    description: "Check console for details.",
+                    variant: "destructive"
+                  });
+                }
+              }}
+              className="text-xs text-muted-foreground hover:text-foreground"
+            >
+              Reset System
+            </Button>
+          </div>
         </div>
       </div>
     </div>

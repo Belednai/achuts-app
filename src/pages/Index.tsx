@@ -6,9 +6,24 @@ import NewsletterSignup from "@/components/NewsletterSignup";
 import { Button } from "@/components/ui/button";
 import { ArrowRight, BookOpen, Scale, Users } from "lucide-react";
 import { Link } from "react-router-dom";
-
+import { storage } from "@/lib/storage";
+import { useEffect, useState } from "react";
 
 const Index = () => {
+  const [categoryCounts, setCategoryCounts] = useState<Record<string, number>>({});
+
+  // Get actual article counts for each category
+  useEffect(() => {
+    const articles = storage.getPublishedArticles();
+    const counts: Record<string, number> = {};
+    
+    articles.forEach(article => {
+      counts[article.category] = (counts[article.category] || 0) + 1;
+    });
+    
+    setCategoryCounts(counts);
+  }, []);
+
   // Sample articles data
   const featuredArticles = [
     {
@@ -83,10 +98,12 @@ const Index = () => {
                       Read My Work
                     </Button>
                   </Link>
-                  <Button variant="outline" size="lg">
-                    <Users className="w-5 h-5 mr-2" />
-                    Connect on LinkedIn
-                  </Button>
+                  <a href="https://www.linkedin.com/in/abraham-achut-panchol-b18829264/" target="_blank" rel="noopener noreferrer">
+                    <Button variant="outline" size="lg">
+                      <Users className="w-5 h-5 mr-2" />
+                      Connect on LinkedIn
+                    </Button>
+                  </a>
                 </div>
               </div>
               <div className="relative">
@@ -161,24 +178,25 @@ const Index = () => {
             
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
               {[
-                { name: "Constitutional Law", count: 12, color: "bg-primary" },
-                { name: "Criminal Law", count: 8, color: "bg-destructive" },
-                { name: "Property Law", count: 6, color: "bg-accent" },
-                { name: "Employment Law", count: 4, color: "bg-secondary" },
-              ].map((category) => (
-                <div
-                  key={category.name}
-                  className="group p-6 rounded-xl border border-border hover:shadow-card transition-all duration-300 cursor-pointer"
-                >
-                  <div className={`w-12 h-12 ${category.color} rounded-lg mb-4 opacity-80 group-hover:opacity-100 transition-opacity`} />
-                  <h3 className="text-lg font-semibold text-foreground mb-2">
-                    {category.name}
-                  </h3>
-                  <p className="text-muted-foreground text-sm">
-                    {category.count} articles
-                  </p>
-                </div>
-              ))}
+                { name: "Constitutional Law", count: categoryCounts["Constitutional Law"] || 0, color: "bg-primary" },
+                { name: "Criminal Law", count: categoryCounts["Criminal Law"] || 0, color: "bg-destructive" },
+                { name: "Property Law", count: categoryCounts["Property Law"] || 0, color: "bg-accent" },
+                { name: "Employment Law", count: categoryCounts["Employment Law"] || 0, color: "bg-secondary" },
+                              ].map((category) => (
+                  <Link
+                    key={category.name}
+                    to={`/articles?category=${encodeURIComponent(category.name)}`}
+                    className="group p-6 rounded-xl border border-border hover:shadow-card transition-all duration-300 cursor-pointer block"
+                  >
+                    <div className={`w-12 h-12 ${category.color} rounded-lg mb-4 opacity-80 group-hover:opacity-100 transition-opacity`} />
+                    <h3 className="text-lg font-semibold text-foreground mb-2">
+                      {category.name}
+                    </h3>
+                    <p className="text-muted-foreground text-sm">
+                      {category.count} articles
+                    </p>
+                  </Link>
+                ))}
             </div>
           </div>
         </section>

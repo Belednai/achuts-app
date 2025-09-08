@@ -3,7 +3,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Mail, Linkedin, Twitter, MapPin, GraduationCap, BookOpen, Scale, Award } from "lucide-react";
+import { Mail, Linkedin, Twitter, MapPin, GraduationCap, BookOpen, Scale, Award, Facebook } from "lucide-react";
 
 
 const About = () => {
@@ -162,18 +162,24 @@ const About = () => {
             </h2>
             
             <div className="flex flex-col sm:flex-row gap-4 justify-center mb-8">
-              <Button variant="legal" size="lg" className="group">
-                <Mail className="w-5 h-5 mr-2" />
-                Send Email
-              </Button>
-              <Button variant="outline" size="lg">
-                <Linkedin className="w-5 h-5 mr-2" />
-                LinkedIn Profile
-              </Button>
-              <Button variant="outline" size="lg">
-                <Twitter className="w-5 h-5 mr-2" />
-                Follow on Twitter
-              </Button>
+              <a href="https://www.facebook.com/achuti.panchol" target="_blank" rel="noopener noreferrer">
+                <Button variant="legal" size="lg" className="group">
+                  <Facebook className="w-5 h-5 mr-2" />
+                  Connect on Facebook
+                </Button>
+              </a>
+              <a href="https://www.linkedin.com/in/abraham-achut-panchol-b18829264/" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="lg">
+                  <Linkedin className="w-5 h-5 mr-2" />
+                  LinkedIn Profile
+                </Button>
+              </a>
+              <a href="https://x.com/AchutWal" target="_blank" rel="noopener noreferrer">
+                <Button variant="outline" size="lg">
+                  <Twitter className="w-5 h-5 mr-2" />
+                  Follow on Twitter
+                </Button>
+              </a>
             </div>
             
             <div className="flex items-center justify-center gap-2 text-muted-foreground">

@@ -19,4 +19,8 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  define: {
+    // Feature flag for new brand color - ON in dev, OFF in prod until QA completes
+    __ENABLE_NEW_BRAND_COLOR__: mode === 'development' ? 'true' : 'false',
+  },
 }));

@@ -110,6 +110,14 @@ class StorageManager {
     return this.getArticles().filter(a => a.status === 'PUBLISHED' && !a.isArchived);
   }
 
+  getArticlesByCategory(category: string): Article[] {
+    return this.getArticles().filter(a => 
+      a.status === 'PUBLISHED' && 
+      !a.isArchived && 
+      a.category.toLowerCase() === category.toLowerCase()
+    );
+  }
+
   getDraftArticles(): Article[] {
     return this.getArticles().filter(a => a.status === 'DRAFT' && !a.isArchived);
   }
