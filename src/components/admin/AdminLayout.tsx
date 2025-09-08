@@ -148,7 +148,7 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
 
             {/* Right side */}
             <div className="flex items-center space-x-4">
-              {/* User Info and Logout */}
+              {/* User Info - Always visible */}
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
                   <Avatar className="h-7 w-7">
@@ -160,11 +160,12 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                     {user?.displayName || user?.username || 'Admin'}
                   </span>
                 </div>
+                {/* Logout button - Desktop only */}
                 <Button
                   variant="ghost"
                   size="sm"
                   onClick={handleLogout}
-                  className="text-destructive hover:bg-destructive/10"
+                  className="hidden lg:flex text-destructive hover:bg-destructive/10"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
@@ -220,6 +221,19 @@ const AdminLayout = ({ children }: AdminLayoutProps) => {
                   </Link>
                 ))}
               </nav>
+
+              {/* Logout Button - Mobile only */}
+              <div className="mt-6 pt-6 border-t">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleLogout}
+                  className="w-full justify-start text-destructive hover:bg-destructive/10"
+                >
+                  <LogOut className="h-4 w-4 mr-3" />
+                  Logout
+                </Button>
+              </div>
             </div>
           </div>
         </div>
